@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Gensyn Compute Challenge</title>
+<meta name="description" content="Pick your hardware → answer fast → verify tasks. A playful Gensyn-inspired quiz." />
+<link rel="preload" href="/gensyn-ring.png" as="image">
+<style>
+  :root{
+    --bg:#0f0b08;
+    --panel:#1b1410;
+    --ink:#fff6e5;
+    --ink-dim:#d9ccb5;
+    --gold:#efc766;
+    --gold-2:#e5b951;
+    --chip:#2a221c;
+    --accent:#79b7ff; /* footer link */
+    --pill:#3a2f26;
+    --pill-ink:#f6e7c8;
+    --ok:#29d07e;
+    --err:#ff6b6b;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+    color:var(--ink);
+    background: radial-gradient(1200px 1200px at 50% -10%, #1a120e 0%, #100b09 45%, var(--bg) 100%) fixed;
+    overflow-y:auto;
+  }
+
+  /* ---------- watermark (bigger) ---------- */
+  .bg-ring{
+    position:fixed; inset:0; pointer-events:none; opacity:.10;
+    background:
+      url('/gensyn-ring.png') center 28% / min(1200px, 85vmin) no-repeat;
+    filter:drop-shadow(0 0 26px rgba(255,219,148,.08));
+    z-index:-1;
+  }
+
+  /* faint floating squares */
+  .grid-float:before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:-2;
+    background-image:
+      radial-gradient(6px 6px at 10% 70%, rgba(255,255,255,.03) 40%, transparent 41%),
+      radial-gradient(8px 8px at 25% 40%, rgba(255,255,255,.035) 40%, transparent 42%),
+      radial-gradient(7px 7px at 45% 80%, rgba(255,255,255,.03) 40%, transparent 41%),
+      radial-gradient(9px 9px at 70% 60%, rgba(255,255,255,.03) 40%, transparent 41%),
+      radial-gradient(7px 7px at 85% 30%, rgba(255,255,255,.03) 40%, transparent 41%);
+    background-repeat:no-repeat;
+    animation: drift 22s linear infinite;
+  }
+  @keyframes drift{
+    0% {transform:translateY(0)}
+    100% {transform:translateY(-40px)}
+  }
+
+  .shell{max-width:1080px; margin:52px auto 80px; padding:0 22px}
+
+  /* ---------- hero ---------- */
+  .title{
+    font-weight:800; font-size: clamp(28px, 4.2vw, 44px);
+    letter-spacing:.5px; display:flex; align-items:center; gap:12px;
+    text-shadow:0 2px 0 rgba(0,0,0,.25);
+    margin-bottom:10px;
+  }
+  .twinkle{font-size:1.2em; filter: drop-shadow(0 0 6px rgba(255,216,141,.35));}
+  .lead{color:var(--ink-dim); font-size:clamp(14px,2.2vw,16px); max-width:880px; margin:6px 0 18px}
+
+  /* ---------- motto paragraph (no panel) ---------- */
+  .motto{
+    color:#d3c6ad; max-width:920px; margin:0 0 26px;
+  }
+
+  /* ---------- the only panel we keep ---------- */
+  .panel{
+    background:linear-gradient(180deg, rgba(27,20,16,.92), rgba(27,20,16,.92));
+    border:1px solid rgba(255,232,186,.08);
+    border-radius:20px;
+    box-shadow:
+      0 0 0 1px rgba(255,221,162,.05) inset,
+      0 20px 80px rgba(255,206,116,.06),
+      0 10px 30px rgba(0,0,0,.45);
+    padding:26px 26px 28px;
+    margin:0 auto 22px;
+  }
+  .panel h2{margin:4px 0 14px; letter-spacing:.4px; font-size:26px}
+
+  /* cards (difficulty) */
+  .cards{display:grid; gap:22px; grid-template-columns:repeat(3,1fr)}
+  .card{
+    background:linear-gradient(140deg, var(--gold), var(--gold-2));
+    color:#241a12; border-radius:18px; padding:18px 20px;
+    box-shadow:0 12px 36px rgba(255,210,120,.15), 0 2px 0 rgba(0,0,0,.2) inset;
+    cursor:pointer; transition: transform .18s ease, box-shadow .18s ease;
+    position:relative; overflow:hidden;
+  }
+  .card:hover{transform:translateY(-3px); box-shadow:0 18px 50px rgba(255,210,120,.23)}
+  .card h3{margin:6px 0 10px; font-size:22px}
+  .pill{
+    display:inline-block; margin-left:10px; padding:6px 10px;
+    background:var(--pill); color:var(--pill-ink);
+    border-radius:999px; font-weight:700; font-size:12px; letter-spacing:.4px;
+  }
+  .muted{color:#4c3f32; font-weight:700; font-size:14px}
+
+  /* quiz panel */
+  .meta{
+    display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; margin-bottom:16px
+  }
+  .meta .box{
+    background:#14100d; border:1px solid rgba(255,224,182,.06); border-radius:14px; padding:16px 18px;
+  }
+  .meta .k{display:block; color:#bdaf96; font-size:14px}
+  .meta .v{display:block; font-size:26px; font-weight:800; margin-top:4px}
+
+  .qwrap{background:#14100d; border:1px solid rgba(255,224,182,.06); border-radius:16px; padding:20px}
+  .question{font-size:22px; font-weight:800; margin:0 0 12px}
+  .opt{background:#1a140f; border:1px solid rgba(255,224,182,.06); color:#e9dcc6; border-radius:14px;
+       padding:16px 18px; margin:10px 0; cursor:pointer; transition: transform .12s ease, border-color .12s ease; }
+  .opt:hover{transform:translateY(-1px); border-color:rgba(255,232,186,.22)}
+  .opt.correct{border-color:rgba(41,208,126,.85); box-shadow:0 0 0 2px rgba(41,208,126,.25) inset}
+  .opt.wrong{border-color:rgba(255,107,107,.75); box-shadow:0 0 0 2px rgba(255,107,107,.18) inset}
+  .footrow{display:flex; justify-content:space-between; margin-top:10px; color:#bdaF96}
+
+  /* loader */
+  .loader{
+    position:fixed; inset:0; display:none; place-items:center; background:rgba(10,7,5,.55);
+    backdrop-filter: blur(2px); z-index:40;
+  }
+  .spinner{
+    width:88px; height:88px;
+    background:url('/gensyn-ring.png') center/contain no-repeat;
+    animation:spin 1.4s linear infinite;
+    filter:drop-shadow(0 0 14px rgba(255,210,126,.25));
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* footer */
+  footer{margin:22px 0 80px; text-align:center; color:#e7d8bf; font-weight:700}
+  footer a{color:var(--accent); text-decoration:none}
+  footer b{font-weight:800}
+
+  /* responsive */
+  @media (max-width:920px){
+    .cards{grid-template-columns:1fr}
+    .meta{grid-template-columns:1fr; gap:10px}
+  }
+</style>
+</head>
+<body>
+<div class="bg-ring"></div>
+<div class="grid-float"></div>
+
+<div class="shell">
+
+  <h1 class="title"><span class="twinkle">✨</span> Gensyn Compute Challenge</h1>
+  <p class="lead">
+    Pick your “hardware” → answer fast → verify tasks. <b>10 tasks</b> per run. Deck and options shuffle on every refresh.
+  </p>
+  <p class="motto">
+    This mini-game is a community-made, Gensyn-inspired learning toy. The goal is simple:
+    help newcomers grok how decentralized compute works (and have some fun).
+    <b>No wallet, no API, just knowledge.</b>
+  </p>
+
+  <!-- the only section with a panel -->
+  <section id="choose" class="panel">
+    <h2>Choose difficulty</h2>
+    <div class="cards">
+      <div class="card" data-tier="cpu">
+        <h3>CPU <span class="pill">Simple</span></h3>
+        <div class="muted">More time • foundational questions</div>
+      </div>
+      <div class="card" data-tier="gpu">
+        <h3>RTX 4090 <span class="pill">Medium</span></h3>
+        <div class="muted">Standard time • mixed difficulty</div>
+      </div>
+      <div class="card" data-tier="h200">
+        <h3>H200 <span class="pill">Hard</span></h3>
+        <div class="muted">Less time • advanced questions</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz" class="panel" style="display:none">
+    <div class="meta">
+      <div class="box"><span class="k">Profile</span><span class="v" id="metaProfile">CPU [Simple]</span></div>
+      <div class="box"><span class="k">Tasks Verified</span><span class="v" id="metaScore">0/10</span></div>
+      <div class="box"><span class="k">Time Left</span><span class="v" id="metaTime">15s</span></div>
+    </div>
+
+    <div class="qwrap">
+      <div class="question" id="qtext">Loading…</div>
+      <div id="opts"></div>
+      <div class="footrow">
+        <div id="progress">Task 1 of 10</div>
+        <div id="status"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer><b>Made with ♥</b> by <a href="https://x.com/TheUvKhan" target="_blank" rel="noopener">TheUvKhan</a></footer>
+</div>
+
+<!-- loader overlay -->
+<div class="loader" id="loader"><div class="spinner" aria-label="Loading"></div></div>
+
+<script>
+/* -------------- CONFIG -------------- */
+const RUN_LEN = 10;
+const SPEEDS = {
+  cpu:   {label:'CPU [Simple]',   perQ:15, color:'#a0e2b6'},
+  gpu:   {label:'RTX 4090 [Medium]', perQ:12, color:'#ffd580'},
+  h200:  {label:'H200 [Hard]',    perQ:10, color:'#ffb07a'}
+};
+const PROCESS_DELAY = 500; // 0.5s “processing…” after tier pick & every answer
+
+/* -------------- QUESTIONS --------------
+   To keep this message compact, below is a SAMPLE bank.
+   If you already deployed the full 50/50/50 set, simply paste your arrays
+   over these and you’re done (keep the structure: {q, a:[...], c:index}).
+---------------------------------------- */
+const CPU_QS = [
+  { q:"What does a block explorer help you do on Gensyn-like networks?",
+    a:["Deploy smart contracts","Inspect transactions & stats","Run a validator"],
+    c:1 },
+  { q:"Transparent settlement mainly helps…",
+    a:["Hide activity","Improve auditing & traceability","Remove history"],
+    c:1 },
+  { q:"Why use a public API/dashboard when learning?",
+    a:["To pay validators directly","To visualize network state quickly","To generate private keys"],
+    c:1 },
+  { q:"Average block time means…",
+    a:["Time between transactions","Time to generate a block","Time nodes go offline"],
+    c:1 },
+  { q:"Leaderboard entries usually rank…",
+    a:["Node uptime / score","Gas prices","Wallet balances"],
+    c:0 }
+];
+
+const GPU_QS = [
+  { q:"Why would a GPU node be useful in Gensyn-style training?",
+    a:["Parallel math workloads","Improving wallet seed phrases","Lowering block times directly"],
+    c:0 },
+  { q:"When verifying tasks off-chain, a good property is…",
+    a:["Determinism or replayability","Opaque, hidden outputs","Irreversible randomness"],
+    c:0 },
+  { q:"What’s a safe use of public endpoints?",
+    a:["DoS testing them","Reading summarized stats","Posting private keys"],
+    c:1 },
+  { q:"Checkpointing in training helps…",
+    a:["Resume/verify progress","Reduce transparency","Break reproducibility"],
+    c:0 },
+  { q:"A fair scoring mechanism should reduce…",
+    a:["Sybil/duplicate identities","Training throughput","Consensus"],
+    c:0 }
+];
+
+const HARD_QS = [
+  { q:"In verifiable compute, a proof system ideally offers…",
+    a:["High proof size & slow verification","Low overhead verification","No reproducibility"],
+    c:1 },
+  { q:"Task batching on a compute network helps primarily with…",
+    a:["Throughput & amortized overhead","Key generation","Wallet UX only"],
+    c:0 },
+  { q:"Slashing or penalties in a marketplace aim to…",
+    a:["Discourage bad work","Increase gas limits","Lower network transparency"],
+    c:0 },
+  { q:"Decentralized training reliability improves with…",
+    a:["Diverse, redundant nodes","Single node monopoly","Opaque scoring"],
+    c:0 },
+  { q:"Layered verification (spot checks + proofs) is useful because…",
+    a:["It mixes cost and coverage","It removes the need for data","It stops consensus"],
+    c:0 }
+];
+
+/* -------------- STATE -------------- */
+const $ = sel => document.querySelector(sel);
+const $opts = $('#opts'); const $qtext = $('#qtext');
+const $progress = $('#progress'); const $status = $('#status');
+const $quiz = $('#quiz'); const $choose = $('#choose');
+const $metaProfile = $('#metaProfile'); const $metaScore = $('#metaScore'); const $metaTime = $('#metaTime');
+const $loader = $('#loader');
+
+let deck=[], idx=0, score=0, timer=null, timeLeft=15, tier='cpu';
+
+/* -------------- HELPERS -------------- */
+const shuffle = arr => { for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]} return arr; };
+const sampleDeck = (bank) => shuffle(bank.slice()).slice(0, RUN_LEN);
+
+function showLoader(on=true){ $loader.style.display = on ? 'grid' : 'none'; }
+function setTier(t){
+  tier=t;
+  const sp=SPEEDS[t];
+  $metaProfile.textContent=sp.label;
+}
+
+/* -------------- RENDER -------------- */
+function renderQ(){
+  const q = deck[idx];
+  $qtext.textContent = q.q;
+  $opts.innerHTML = '';
+  q.a.forEach((txt,i)=>{
+    const b=document.createElement('div');
+    b.className='opt';
+    b.textContent = String.fromCharCode(65+i)+'. '+txt;
+    b.onclick=()=>answer(i);
+    $opts.appendChild(b);
+  });
+  $progress.textContent = `Task ${idx+1} of ${RUN_LEN}`;
+  $status.textContent = '';
+  tickReset();
+}
+
+function answer(i){
+  // “processing…” pause + correctness glow
+  const q=deck[idx];
+  [...$opts.children].forEach(el=>el.onclick=null); // lock
+  const chosen=$opts.children[i];
+  if(i===q.c){ chosen.classList.add('correct'); score++; $status.textContent='Verified ✓'; $status.style.color='var(--ok)'; }
+  else{ chosen.classList.add('wrong'); $opts.children[q.c].classList.add('correct'); $status.textContent='Mismatch ✗'; $status.style.color='var(--err)'; }
+  $metaScore.textContent = `${score}/${RUN_LEN}`;
+  clearInterval(timer);
+
+  setTimeout(()=>{
+    idx++;
+    if(idx>=RUN_LEN){ finish(); }
+    else{ timeLeft=SPEEDS[tier].perQ; renderQ(); }
+  }, PROCESS_DELAY);
+}
+
+function tickReset(){
+  clearInterval(timer);
+  timeLeft = SPEEDS[tier].perQ;
+  $metaTime.textContent = timeLeft+'s';
+  timer=setInterval(()=>{
+    timeLeft--; $metaTime.textContent=timeLeft+'s';
+    if(timeLeft<=0){ clearInterval(timer); answer(999); } // timeout → wrong
+  },1000);
+}
+
+function finish(){
+  $status.textContent = 'Run complete';
+  $status.style.color = '#e9dcc6';
+  // back to choose after a short pause
+  setTimeout(()=>{
+    $quiz.style.display='none';
+    $choose.style.display='block';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }, 900);
+}
+
+/* -------------- FLOW -------------- */
+document.querySelectorAll('.card').forEach(card=>{
+  card.addEventListener('click', async ()=>{
+    const t = card.getAttribute('data-tier');
+    showLoader(true);
+    setTimeout(()=>{
+      try{
+        setTier(t);
+        if(t==='cpu')   deck = sampleDeck(CPU_QS);
+        if(t==='gpu')   deck = sampleDeck(GPU_QS);
+        if(t==='h200')  deck = sampleDeck(HARD_QS);
+        deck = deck.map(q=>({ ...q, a: shuffle(q.a.slice()) , c: q.a.slice().indexOf(q.a[q.c]) })); // options shuffled visually but keep c mapping
+        // re-map correct index after shuffle
+        deck = deck.map(x=>{
+          const original = (t==='cpu'?CPU_QS: t==='gpu'?GPU_QS:HARD_QS).find(q=>q.q===x.q);
+          const correctText = original.a[original.c];
+          return { ...x, c: x.a.indexOf(correctText) };
+        });
+
+        idx=0; score=0; $metaScore.textContent='0/'+RUN_LEN;
+        $choose.style.display='none';
+        $quiz.style.display='block';
+        renderQ();
+      }finally{
+        showLoader(false);
+      }
+    }, PROCESS_DELAY);
+  });
+});
+</script>
+</body>
+</html>
