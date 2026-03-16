@@ -6,172 +6,658 @@
 <title>Gensyn Compute Challenge</title>
 <meta name="description" content="A tiny community-made, Gensyn-inspired learning game about decentralized compute." />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
   :root{
-    --bg:#0f0a08;            /* deep cocoa */
-    --panel:#1b1410;         /* darker cocoa */
-    --panel-2:#1a130f;       /* soft card wrap */
-    --card:#eeca66;          /* gensyn gold */
-    --ink:#f8edd6;           /* warm ivory for headings */
-    --text:#d8cdbd;          /* body text */
-    --muted:#a49380;
-    --ok:#17d47d;
-    --bad:#ff5d5d;
-    --accent:#ffd15a;        /* accent for glows */
-    --pill:#5a4a33;
-    --blue:#4ea0ff;
-    --ringOpacity: 0.05;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    color:var(--text);
-    background: radial-gradient(1200px 1200px at 50% 0%, #1a130f 0%, var(--bg) 60%);
-    overflow-x:hidden;
+    --primary: #00d9ff;       /* vibrant cyan */
+    --secondary: #ff6b6b;     /* coral red */
+    --accent: #ffd15a;        /* golden yellow */
+    --dark-bg: #0a0e27;       /* deep navy */
+    --card-bg: #141829;       /* slightly lighter navy */
+    --text-primary: #ffffff;  /* white */
+    --text-secondary: #a0aec0; /* muted gray */
+    --success: #10b981;       /* emerald green */
+    --error: #ef4444;         /* bright red */
   }
 
-  /* === large faint gensyn ring background === */
-  .bg-ring{
-    position:fixed; inset:0; pointer-events:none; z-index:0;
-    background:
-      radial-gradient(600px 600px at 50% 40%, rgba(255,209,90,.08), transparent 60%),
-      url('/gensyn-ring.png') center center/520px no-repeat;
-    opacity:var(--ringOpacity);
-    filter:contrast(120%) saturate(110%);
-}
-
-  /* subtle “pixel cells” to mimic dashboard feel */
-  .cells{
-    position:fixed; inset:0; pointer-events:none; z-index:0;
-    background-image:
-      radial-gradient(transparent 60%, rgba(255,255,255,0.02) 61%),
-      radial-gradient(transparent 60%, rgba(255,255,255,0.02) 61%);
-    background-size: 120px 120px, 120px 120px;
-    background-position: 0 0, 60px 60px;
-    mix-blend-mode:screen;
-    opacity:.35;
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background: linear-gradient(135deg, var(--dark-bg) 0%, #1a1f4d 50%, var(--dark-bg) 100%);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    min-height: 100vh;
   }
 
-  .wrap{position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:48px 20px 96px}
-
-  h1{
-    color:var(--ink);
-    font-weight:900; letter-spacing:.4px; font-size:48px; line-height:1.1;
-    text-shadow:0 1px 0 #000, 0 20px 60px rgba(255,209,90,.08);
-    margin:12px 0 8px;
-  }
-  .brand-spark{filter:drop-shadow(0 6px 20px rgba(255,209,90,.3))}
-  .lead{color:var(--muted); font-size:18px}
-  .lead strong{color:var(--ink)}
-
-  .panel{
-    background:linear-gradient(180deg, var(--panel-2), var(--panel));
-    border:1px solid #30251d; border-radius:16px;
-    box-shadow:0 40px 120px rgba(0,0,0,.45), 0 0 0 1px rgba(255,209,90,.06) inset;
+  /* Animated background elements */
+  .bg-gradient {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
   }
 
-  /* === tiers area (single plate only) === */
-  .tiers{
-    margin-top:28px; padding:28px; display:block;
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
   }
-  .tiers h2{
-    margin:0 0 18px; color:var(--ink); font-weight:800; font-size:28px;
-  }
-  .grid{
-    display:grid; grid-template-columns:repeat(3,1fr); gap:22px;
-  }
-  .card{
-    background:radial-gradient(120% 140% at 20% 0%, #f3d67a 0%, var(--card) 60%);
-    border-radius:16px; padding:22px 20px 22px;
-    color:#352c1d; cursor:pointer; position:relative;
-    box-shadow:
-      0 24px 60px rgba(255,209,90,.15),
-      0 0 0 1px rgba(139,108,54,.25) inset;
-    transform:translateZ(0);
-    transition:filter .2s, transform .2s, box-shadow .2s;
-  }
-  .card:hover{ transform:translateY(-3px); box-shadow:
-      0 28px 80px rgba(255,209,90,.18),
-      0 0 0 1px rgba(139,108,54,.25) inset; }
-  .card h3{ margin:0 0 8px; font-size:26px; color:#241b0e }
-  .hint-pill{
-    display:inline-flex; align-items:center; gap:6px;
-    background:var(--pill); color:#efe2c7; font-weight:700;
-    padding:4px 10px; border-radius:999px; font-size:12px; vertical-align:middle;
-    margin-left:10px;
-  }
-  .card p{ margin:8px 0 0; color:#3a2f22; font-weight:700; line-height:1.35 }
 
-  /* === status row when in quiz === */
-  .status{
-    margin-top:24px; padding:16px 20px; display:grid;
-    grid-template-columns:1fr 1fr 1fr; gap:18px;
-    border-bottom:1px solid #2a211a;
+  .blob-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--primary);
+    top: -50px;
+    right: -100px;
+    animation: float 6s ease-in-out infinite;
   }
-  .status .k{
-    padding:20px; border-radius:12px; background:#140f0b;
-    border:1px solid #2d241c; color:var(--ink); font-weight:800; font-size:18px;
-  }
-  .status .k .v{ display:block; font-size:28px; margin-top:4px; color:var(--text); font-weight:900 }
 
-  /* === question bloc === */
-  .qwrap{ padding:24px 20px 10px }
-  .q{ font-size:28px; color:var(--ink); font-weight:900; margin:0 0 18px }
-  .opt{
-    border:1px solid #2c231c; background:#150f0b; color:var(--text);
-    border-radius:12px; padding:16px 18px; margin:12px 0; cursor:pointer;
-    transition:transform .08s, border-color .18s, background .18s;
+  .blob-2 {
+    width: 350px;
+    height: 350px;
+    background: var(--secondary);
+    bottom: 100px;
+    left: -150px;
+    animation: float 8s ease-in-out infinite reverse;
   }
-  .opt:hover{ transform:translateY(-1px); border-color:#413224 }
-  .opt.correct{ border-color:rgba(23,212,125,.6); box-shadow:0 0 0 2px rgba(23,212,125,.18) inset }
-  .opt.wrong{ border-color:rgba(255,93,93,.6); box-shadow:0 0 0 2px rgba(255,93,93,.18) inset }
-  .foot-line{ display:flex; justify-content:space-between; align-items:center; color:var(--muted); padding:8px 2px 18px }
-  .ok{ color:var(--ok) } .bad{ color:var(--bad) }
 
-  /* loader overlay using rotating ring */
-  .overlay{
-    position:fixed; inset:0; display:none; align-items:center; justify-content:center;
-    background:rgba(15,10,8,.62); z-index:50; backdrop-filter:blur(2px);
+  .blob-3 {
+    width: 300px;
+    height: 300px;
+    background: var(--accent);
+    top: 50%;
+    left: 50%;
+    animation: float 7s ease-in-out infinite;
   }
-  .overlay.show{ display:flex }
-  .spinner{
-    width:82px; height:82px; border-radius:50%;
-    background:url('/gensyn-ring.png') center/contain no-repeat;
-    animation:spin 1.3s linear infinite;
-    filter:drop-shadow(0 0 22px rgba(255,209,90,.35));
+
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(30px, -30px); }
   }
-  @keyframes spin{ to{ transform:rotate(360deg) } }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 24px 100px;
+    animation: slideInUp 0.8s ease-out;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    animation: slideInDown 0.8s ease-out;
+  }
+
+  .logo {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 28px;
+    color: var(--dark-bg);
+    box-shadow: 0 8px 24px rgba(0, 217, 255, 0.3);
+  }
+
+  h1 {
+    color: var(--text-primary);
+    font-weight: 800;
+    letter-spacing: -1px;
+    font-size: 48px;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  .lead {
+    color: var(--text-secondary);
+    font-size: 18px;
+    line-height: 1.6;
+    margin: 16px 0;
+    max-width: 700px;
+  }
+
+  .lead strong {
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  /* Panels */
+  .panel {
+    background: rgba(20, 24, 41, 0.8);
+    border: 1px solid rgba(0, 217, 255, 0.15);
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 32px 64px rgba(0, 0, 0, 0.4);
+    animation: scaleIn 0.6s ease-out;
+  }
+
+  /* Tiers/Difficulty Selection */
+  .tiers {
+    margin-top: 40px;
+    padding: 40px;
+  }
+
+  .tiers h2 {
+    color: var(--text-primary);
+    font-weight: 800;
+    font-size: 36px;
+    margin: 0 0 32px 0;
+    letter-spacing: -1px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .card {
+    background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(255, 107, 107, 0.1));
+    border: 2px solid transparent;
+    border-radius: 16px;
+    padding: 28px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: slideInUp 0.6s ease-out;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+
+  .card:hover {
+    border-color: var(--primary);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 217, 255, 0.25), 
+                0 0 0 2px rgba(0, 217, 255, 0.15) inset;
+  }
+
+  .card h3 {
+    color: var(--text-primary);
+    font-weight: 800;
+    font-size: 28px;
+    margin: 0 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .difficulty-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 209, 90, 0.15);
+    color: var(--accent);
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    border: 1px solid rgba(255, 209, 90, 0.3);
+  }
+
+  .card p {
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin: 12px 0 0 0;
+    line-height: 1.5;
+    font-size: 14px;
+  }
+
+  /* Quiz View */
+  .status {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 24px 40px;
+    border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+  }
+
+  .stat-card {
+    padding: 20px;
+    border-radius: 12px;
+    background: rgba(0, 217, 255, 0.05);
+    border: 1px solid rgba(0, 217, 255, 0.15);
+    text-align: center;
+  }
+
+  .stat-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 32px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .stat-value.warn {
+    color: var(--secondary);
+  }
+
+  .qwrap {
+    padding: 40px;
+  }
+
+  .q {
+    color: var(--text-primary);
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 1.4;
+    margin: 0 0 32px 0;
+  }
+
+  .opts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+  }
+
+  .opt {
+    background: rgba(20, 24, 41, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 18px 20px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-weight: 600;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .opt::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 217, 255, 0.05);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .opt:hover {
+    border-color: var(--primary);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 217, 255, 0.15);
+  }
+
+  .opt:hover::before {
+    opacity: 1;
+  }
+
+  .opt strong {
+    color: var(--primary);
+    margin-right: 8px;
+  }
+
+  .opt.correct {
+    border-color: var(--success);
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+  }
+
+  .opt.correct strong {
+    color: var(--success);
+  }
+
+  .opt.wrong {
+    border-color: var(--error);
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error);
+  }
+
+  .opt.wrong strong {
+    color: var(--error);
+  }
+
+  .foot-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0 0 0;
+    margin-top: 24px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .verdict {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ok {
+    color: var(--success);
+    font-weight: 700;
+  }
+
+  .bad {
+    color: var(--secondary);
+    font-weight: 700;
+  }
+
+  /* Results */
+  #done {
+    padding: 40px;
+    text-align: center;
+  }
+
+  #done h2 {
+    color: var(--text-primary);
+    font-weight: 800;
+    font-size: 36px;
+    margin: 0 0 12px 0;
+  }
+
+  .final-line {
+    color: var(--text-secondary);
+    font-size: 18px;
+    margin-top: 16px;
+  }
+
+  .final-line strong {
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 28px;
+    justify-content: center;
+  }
+
+  button {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+  }
+
+  #again {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: var(--dark-bg);
+    box-shadow: 0 12px 24px rgba(0, 217, 255, 0.3);
+  }
+
+  #again:hover {
+    box-shadow: 0 16px 32px rgba(0, 217, 255, 0.4);
+  }
+
+  #homeBtn {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--primary);
+    border: 2px solid var(--primary);
+  }
+
+  #homeBtn:hover {
+    background: rgba(0, 217, 255, 0.1);
+    box-shadow: 0 8px 16px rgba(0, 217, 255, 0.15);
+  }
+
+  /* Loader overlay */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 14, 39, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 50;
+  }
+
+  .overlay.show {
+    display: flex;
+  }
+
+  .spinner {
+    width: 80px;
+    height: 80px;
+    border: 4px solid rgba(0, 217, 255, 0.2);
+    border-top: 4px solid var(--primary);
+    border-right: 4px solid var(--secondary);
+    border-radius: 50%;
+    animation: spin 1.2s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
 
   /* Footer */
-  .credits{
-    text-align:center; margin-top:26px; color:var(--muted); font-weight:600
+  .credits {
+    text-align: center;
+    margin-top: 32px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 14px;
   }
-  .credits a{ color:var(--blue); font-weight:800; text-decoration:none }
-  .credits a:hover{ text-decoration:underline }
-  .credits strong{ color:var(--ink) }
 
-  @media (max-width:950px){
-    .grid{ grid-template-columns:1fr; }
-    .status{ grid-template-columns:1fr; }
-    h1{ font-size:38px }
+  .credits a {
+    color: var(--primary);
+    font-weight: 800;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .credits a:hover {
+    color: var(--secondary);
+  }
+
+  .credits strong {
+    color: var(--text-primary);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .wrap {
+      padding: 40px 16px 80px;
+    }
+
+    h1 {
+      font-size: 36px;
+    }
+
+    .grid {
+      grid-template-columns: 1fr;
+    }
+
+    .status {
+      grid-template-columns: 1fr;
+      gap: 12px;
+      padding: 20px;
+    }
+
+    .q {
+      font-size: 24px;
+    }
+
+    .opts {
+      grid-template-columns: 1fr;
+    }
+
+    .tiers {
+      padding: 24px;
+    }
+
+    #done {
+      padding: 24px;
+    }
+
+    #done h2 {
+      font-size: 28px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+    }
   }
 </style>
 </head>
 <body>
-  <div class="bg-ring"></div>
-  <div class="cells"></div>
+  <div class="bg-gradient">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
 
   <div class="overlay" id="overlay"><div class="spinner" aria-label="processing"></div></div>
 
   <div class="wrap">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:2px">
-      <svg class="brand-spark" width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.2 4.6L19 7l-3.7 3.3L16 16l-4-2.2L8 16l1-5.7L5 7l4.8-.4L12 2Z" fill="#ffd15a"/></svg>
+    <div class="header">
+      <div class="logo">⚡</div>
       <h1>Gensyn Compute Challenge</h1>
     </div>
+
+    <p class="lead">
+      Pick your difficulty level → answer questions → verify your knowledge. <strong>10 challenges per run.</strong>
+    </p>
+    <p class="lead">
+      A modern, interactive learning experience about decentralized compute. No wallet, no API—<strong>just pure knowledge.</strong>
+    </p>
+
+    <!-- Home: Choose Difficulty -->
+    <section id="home" class="panel tiers" role="region" aria-label="choose difficulty">
+      <h2>Choose Your Challenge</h2>
+      <div class="grid">
+        <article class="card" data-tier="cpu">
+          <h3>🔧 CPU Mode</h3>
+          <span class="difficulty-badge">Beginner</span>
+          <p>More time • Foundational concepts • Perfect for getting started</p>
+        </article>
+
+        <article class="card" data-tier="gpu">
+          <h3>⚙️ RTX 4090 Mode</h3>
+          <span class="difficulty-badge">Intermediate</span>
+          <p>Standard time • Mixed difficulty • Build your understanding</p>
+        </article>
+
+        <article class="card" data-tier="h200">
+          <h3>🚀 H200 Mode</h3>
+          <span class="difficulty-badge">Advanced</span>
+          <p>Less time • Advanced topics • Master the subject</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Quiz Page -->
+    <section id="play" class="panel" style="display:none; margin-top:40px">
+      <div class="status">
+        <div class="stat-card">
+          <div class="stat-label">Difficulty</div>
+          <div class="stat-value" id="kTier">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Verified</div>
+          <div class="stat-value" id="kScore">0/10</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Time Remaining</div>
+          <div class="stat-value warn" id="kTime">—</div>
+        </div>
+      </div>
+
+      <div class="qwrap">
+        <h3 class="q" id="theQ">—</h3>
+        <div class="opts" id="opts"></div>
+        <div class="foot-line">
+          <div id="prog">Task 1 of 10</div>
+          <div class="verdict" id="verdict"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Page -->
+    <section id="done" class="panel" style="display:none; margin-top:40px">
+      <h2>Challenge Complete!</h2>
+      <p class="final-line" id="finalLine"></p>
+      <div class="action-buttons">
+        <button id="again">Play Again</button>
+        <button id="homeBtn">Choose Different Mode</button>
+      </div>
+    </section>
+
+    <p class="credits">
+      <strong>Created with ♥</strong> by <a href="https://x.com/TheUvKhan" target="_blank" rel="noopener">TheUvKhan</a>
+      • Learning game • No wallet required
+    </p>
+  </div>
 
     <p class="lead">
       Pick your “hardware” → answer fast → verify tasks. <strong>10 tasks</strong> per run.
@@ -347,7 +833,7 @@ const startTier = async (t) => {
   if(t==='h200'){ deck = sampleDeck(HARD_QS); }
 
   idx = 0; score = 0;
-  kTier.textContent = (t==='cpu')?'CPU [Simple]':(t==='gpu')?'RTX 4090 [Medium]':'H200 [Hard]';
+  kTier.textContent = (t==='cpu')?'🔧 Beginner':(t==='gpu')?'⚙️ Intermediate':'🚀 Advanced';
   kScore.textContent = `0/${RUN_LEN}`;
 
   home.style.display='none';
@@ -367,17 +853,18 @@ const tick = () => {
   }
 };
 
-const nextQ = () => {
+  const nextQ = () => {
   if(idx>=RUN_LEN) return endRun();
 
   const q = deck[idx];
   theQ.textContent = q.q;
   optsWrap.innerHTML='';
-  verdict.textContent='';
+  verdict.innerHTML='';
   prog.textContent = `Task ${idx+1} of ${RUN_LEN}`;
 
   const letters = ['A','B','C','D'];
-  shuffle(q.a).forEach((txt, i)=>{
+  const shuffledOptions = shuffle(q.a);
+  shuffledOptions.forEach((txt, i)=>{
     const btn = document.createElement('button');
     btn.className='opt';
     btn.innerHTML = `<strong>${letters[i]}.</strong> ${txt}`;
@@ -403,15 +890,21 @@ const onPick = async (txt, q) => {
   });
 
   const isCorrect = (txt === correctText);
-  if(isCorrect){ score++; verdict.innerHTML = `<span class="ok">Verified ✓</span>`; }
-  else{ verdict.innerHTML = `<span class="bad">Mismatch ✗</span>`; buttons.forEach(b=>{
-    const plain = b.textContent.replace(/^[A-D]\.\s/,'');
-    if(plain === txt) b.classList.add('wrong');
-  }); }
+  if(isCorrect){ 
+    score++; 
+    verdict.innerHTML = `<span class="ok">✓ Verified</span>`; 
+  }
+  else{ 
+    verdict.innerHTML = `<span class="bad">✗ Mismatch</span>`; 
+    buttons.forEach(b=>{
+      const plain = b.textContent.replace(/^[A-D]\.\s/,'');
+      if(plain === txt) b.classList.add('wrong');
+    }); 
+  }
 
   kScore.textContent = `${score}/${RUN_LEN}`;
 
-  await showOverlay(500);            // 0.5s “verification”
+  await showOverlay(500);            // 0.5s "verification"
   idx++;
   nextQ();
 };
@@ -431,7 +924,8 @@ const lockAndReveal = (forceWrongIndex)=>{
 const endRun = ()=>{
   play.style.display='none';
   done.style.display='block';
-  finalLine.innerHTML = `You verified <strong>${score}/${RUN_LEN}</strong> tasks on <strong>${kTier.textContent}</strong>.`;
+  const percentage = Math.round((score/RUN_LEN)*100);
+  finalLine.innerHTML = `You verified <strong>${score}/${RUN_LEN}</strong> challenges (${percentage}%) on <strong>${kTier.textContent}</strong> difficulty.`;
 };
 
 /* ---------------------- Wiring ---------------------- */
