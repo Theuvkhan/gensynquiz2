@@ -4,35 +4,42 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Gensyn Compute Challenge</title>
-<meta name="description" content="A tiny community-made, Gensyn-inspired learning game about decentralized compute." />
+<meta name="description" content="A premium, interactive learning experience about decentralized compute." />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-  :root{
-    --primary: #00d9ff;       /* vibrant cyan */
-    --secondary: #ff6b6b;     /* coral red */
-    --accent: #ffd15a;        /* golden yellow */
-    --dark-bg: #0a0e27;       /* deep navy */
-    --card-bg: #141829;       /* slightly lighter navy */
-    --text-primary: #ffffff;  /* white */
-    --text-secondary: #a0aec0; /* muted gray */
-    --success: #10b981;       /* emerald green */
-    --error: #ef4444;         /* bright red */
+  :root {
+    --gold: #d4af37;
+    --dark: #0f1419;
+    --card-dark: #1a1f2e;
+    --text-light: #f5f7fa;
+    --text-muted: #9ca3af;
+    --accent-blue: #4f46e5;
+    --accent-purple: #7c3aed;
+    --success: #10b981;
+    --error: #ef4444;
   }
 
-  * { box-sizing: border-box; }
-  html, body { height: 100%; margin: 0; }
-  
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
   body {
-    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-    background: linear-gradient(135deg, var(--dark-bg) 0%, #1a1f4d 50%, var(--dark-bg) 100%);
-    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, var(--dark) 0%, #1a2332 50%, var(--dark) 100%);
+    color: var(--text-light);
     overflow-x: hidden;
     min-height: 100vh;
   }
 
-  /* Animated background elements */
+  /* Premium background with animated elements */
   .bg-gradient {
     position: fixed;
     inset: 0;
@@ -40,51 +47,57 @@
     z-index: 0;
   }
 
-  .blob {
+  .gradient-orb {
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.15;
+    filter: blur(100px);
+    mix-blend-mode: screen;
   }
 
-  .blob-1 {
+  .orb-1 {
+    width: 500px;
+    height: 500px;
+    background: rgba(79, 70, 229, 0.08);
+    top: -100px;
+    right: -100px;
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .orb-2 {
     width: 400px;
     height: 400px;
-    background: var(--primary);
-    top: -50px;
-    right: -100px;
-    animation: float 6s ease-in-out infinite;
+    background: rgba(124, 58, 237, 0.08);
+    bottom: -50px;
+    left: -100px;
+    animation: float 10s ease-in-out infinite reverse;
   }
 
-  .blob-2 {
+  .orb-3 {
     width: 350px;
     height: 350px;
-    background: var(--secondary);
-    bottom: 100px;
-    left: -150px;
-    animation: float 8s ease-in-out infinite reverse;
-  }
-
-  .blob-3 {
-    width: 300px;
-    height: 300px;
-    background: var(--accent);
+    background: rgba(212, 175, 55, 0.06);
     top: 50%;
-    left: 50%;
-    animation: float 7s ease-in-out infinite;
+    right: 10%;
+    animation: float 12s ease-in-out infinite;
   }
 
   @keyframes float {
     0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(30px, -30px); }
+    50% { transform: translate(40px, -40px); }
   }
 
-  @keyframes pulse {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
+  @keyframes fadeInScale {
+    from {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
-  @keyframes slideInUp {
+  @keyframes slideUp {
     from {
       opacity: 0;
       transform: translateY(30px);
@@ -95,391 +108,376 @@
     }
   }
 
-  @keyframes slideInDown {
-    from {
-      opacity: 0;
-      transform: translateY(-30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes scaleIn {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  .wrap {
+  .container {
     position: relative;
     z-index: 1;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 60px 24px 100px;
-    animation: slideInUp 0.8s ease-out;
+    padding: 80px 40px;
+    animation: slideUp 0.9s ease-out;
   }
 
-  /* Header */
+  /* Header Section */
   .header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
-    animation: slideInDown 0.8s ease-out;
-  }
-
-  .logo {
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 28px;
-    color: var(--dark-bg);
-    box-shadow: 0 8px 24px rgba(0, 217, 255, 0.3);
-  }
-
-  h1 {
-    color: var(--text-primary);
-    font-weight: 800;
-    letter-spacing: -1px;
-    font-size: 48px;
-    line-height: 1.1;
-    margin: 0;
-  }
-
-  .lead {
-    color: var(--text-secondary);
-    font-size: 18px;
-    line-height: 1.6;
-    margin: 16px 0;
-    max-width: 700px;
-  }
-
-  .lead strong {
-    color: var(--primary);
-    font-weight: 700;
-  }
-
-  /* Panels */
-  .panel {
-    background: rgba(20, 24, 41, 0.8);
-    border: 1px solid rgba(0, 217, 255, 0.15);
-    border-radius: 24px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 32px 64px rgba(0, 0, 0, 0.4);
-    animation: scaleIn 0.6s ease-out;
-  }
-
-  /* Tiers/Difficulty Selection */
-  .tiers {
-    margin-top: 40px;
-    padding: 40px;
-  }
-
-  .tiers h2 {
-    color: var(--text-primary);
-    font-weight: 800;
-    font-size: 36px;
-    margin: 0 0 32px 0;
-    letter-spacing: -1px;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-  }
-
-  .card {
-    background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(255, 107, 107, 0.1));
-    border: 2px solid transparent;
-    border-radius: 16px;
-    padding: 28px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    animation: slideInUp 0.6s ease-out;
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
-  }
-
-  .card:hover {
-    border-color: var(--primary);
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 217, 255, 0.25), 
-                0 0 0 2px rgba(0, 217, 255, 0.15) inset;
-  }
-
-  .card h3 {
-    color: var(--text-primary);
-    font-weight: 800;
-    font-size: 28px;
-    margin: 0 0 12px 0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .difficulty-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(255, 209, 90, 0.15);
-    color: var(--accent);
-    font-weight: 700;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    border: 1px solid rgba(255, 209, 90, 0.3);
-  }
-
-  .card p {
-    color: var(--text-secondary);
-    font-weight: 500;
-    margin: 12px 0 0 0;
-    line-height: 1.5;
-    font-size: 14px;
-  }
-
-  /* Quiz View */
-  .status {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    padding: 24px 40px;
-    border-bottom: 1px solid rgba(0, 217, 255, 0.1);
-  }
-
-  .stat-card {
-    padding: 20px;
-    border-radius: 12px;
-    background: rgba(0, 217, 255, 0.05);
-    border: 1px solid rgba(0, 217, 255, 0.15);
+    margin-bottom: 60px;
     text-align: center;
   }
 
-  .stat-label {
-    color: var(--text-secondary);
+  .logo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(212, 175, 55, 0.05));
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 50px;
+    font-size: 14px;
     font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--gold);
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 64px;
+    font-weight: 800;
+    margin: 16px 0;
+    background: linear-gradient(135deg, var(--text-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -2px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 20px auto;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* Home Section */
+  #home {
+    animation: fadeInScale 1s ease-out;
+  }
+
+  .difficulty-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 32px;
+    margin-top: 60px;
+  }
+
+  .difficulty-card {
+    position: relative;
+    padding: 40px;
+    background: rgba(26, 31, 46, 0.5);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    border-radius: 20px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    backdrop-filter: blur(10px);
+  }
+
+  .difficulty-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(212, 175, 55, 0.05));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    border-radius: 20px;
+  }
+
+  .difficulty-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(212, 175, 55, 0.15), 0 0 40px rgba(79, 70, 229, 0.1);
+  }
+
+  .difficulty-card:hover::before {
+    opacity: 1;
+  }
+
+  .card-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .card-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: var(--text-light);
+  }
+
+  .card-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(212, 175, 55, 0.15);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+  }
+
+  .card-description {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .card-stats {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(212, 175, 55, 0.1);
+  }
+
+  .stat {
     font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
+    color: var(--text-muted);
   }
 
   .stat-value {
-    color: var(--primary);
-    font-weight: 800;
+    color: var(--gold);
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+  }
+
+  /* Quiz View */
+  #play {
+    display: none;
+    animation: slideUp 0.9s ease-out;
+  }
+
+  .quiz-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .quiz-header {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 50px;
+  }
+
+  .stat-box {
+    padding: 24px;
+    background: rgba(26, 31, 46, 0.5);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+
+  .stat-box:hover {
+    border-color: rgba(212, 175, 55, 0.2);
+    background: rgba(26, 31, 46, 0.7);
+  }
+
+  .stat-label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .stat-display {
+    font-family: 'Playfair Display', serif;
     font-size: 32px;
-    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    color: var(--gold);
   }
 
-  .stat-value.warn {
-    color: var(--secondary);
+  .stat-display.time {
+    color: var(--accent-blue);
   }
 
-  .qwrap {
-    padding: 40px;
+  .question-section {
+    padding: 50px 40px;
+    background: rgba(26, 31, 46, 0.5);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    margin-bottom: 30px;
   }
 
-  .q {
-    color: var(--text-primary);
-    font-weight: 800;
-    font-size: 32px;
+  .question {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 700;
     line-height: 1.4;
-    margin: 0 0 32px 0;
+    margin: 0 0 40px 0;
+    color: var(--text-light);
   }
 
-  .opts {
+  .options-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 16px;
   }
 
-  .opt {
-    background: rgba(20, 24, 41, 0.6);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+  .option {
     padding: 18px 20px;
+    background: rgba(20, 24, 41, 0.6);
+    border: 2px solid rgba(212, 175, 55, 0.15);
+    border-radius: 12px;
     cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
     color: var(--text-secondary);
-    font-weight: 600;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     position: relative;
-    overflow: hidden;
   }
 
-  .opt::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 217, 255, 0.05);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-
-  .opt:hover {
-    border-color: var(--primary);
-    color: var(--text-primary);
+  .option:hover {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.05);
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0, 217, 255, 0.15);
   }
 
-  .opt:hover::before {
-    opacity: 1;
-  }
-
-  .opt strong {
-    color: var(--primary);
-    margin-right: 8px;
-  }
-
-  .opt.correct {
+  .option.correct {
     border-color: var(--success);
     background: rgba(16, 185, 129, 0.1);
     color: var(--success);
   }
 
-  .opt.correct strong {
-    color: var(--success);
-  }
-
-  .opt.wrong {
+  .option.wrong {
     border-color: var(--error);
     background: rgba(239, 68, 68, 0.1);
     color: var(--error);
   }
 
-  .opt.wrong strong {
-    color: var(--error);
-  }
-
-  .foot-line {
+  .question-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 24px 0 0 0;
     margin-top: 24px;
-    color: var(--text-secondary);
-    font-weight: 600;
+    padding-top: 24px;
+    border-top: 1px solid rgba(212, 175, 55, 0.1);
     font-size: 14px;
+    color: var(--text-muted);
   }
 
-  .verdict {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  .feedback {
+    font-weight: 600;
   }
 
-  .ok {
+  .feedback.ok {
     color: var(--success);
-    font-weight: 700;
   }
 
-  .bad {
-    color: var(--secondary);
-    font-weight: 700;
+  .feedback.bad {
+    color: var(--error);
   }
 
-  /* Results */
+  /* Results View */
   #done {
-    padding: 40px;
+    display: none;
+    animation: fadeInScale 1s ease-out;
     text-align: center;
+    padding: 60px 40px;
+    background: rgba(26, 31, 46, 0.5);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
   }
 
-  #done h2 {
-    color: var(--text-primary);
+  .results-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px;
     font-weight: 800;
-    font-size: 36px;
-    margin: 0 0 12px 0;
+    margin: 0 0 20px 0;
+    background: linear-gradient(135deg, var(--text-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
-  .final-line {
-    color: var(--text-secondary);
+  .results-text {
     font-size: 18px;
-    margin-top: 16px;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+    line-height: 1.6;
   }
 
-  .final-line strong {
-    color: var(--primary);
+  .results-text strong {
+    color: var(--gold);
     font-weight: 700;
   }
 
   .action-buttons {
     display: flex;
     gap: 16px;
-    margin-top: 28px;
     justify-content: center;
+    flex-wrap: wrap;
   }
 
   button {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    padding: 14px 24px;
+    padding: 14px 28px;
     border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 700;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
     font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
     transition: all 0.3s ease;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
-  }
-
-  button:hover {
-    transform: translateY(-2px);
+    text-transform: uppercase;
   }
 
   #again {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: var(--dark-bg);
-    box-shadow: 0 12px 24px rgba(0, 217, 255, 0.3);
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    color: white;
+    border: none;
+    box-shadow: 0 12px 30px rgba(79, 70, 229, 0.3);
   }
 
   #again:hover {
-    box-shadow: 0 16px 32px rgba(0, 217, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px rgba(79, 70, 229, 0.4);
   }
 
   #homeBtn {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--primary);
-    border: 2px solid var(--primary);
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--gold);
+    border: 2px solid var(--gold);
   }
 
   #homeBtn:hover {
-    background: rgba(0, 217, 255, 0.1);
-    box-shadow: 0 8px 16px rgba(0, 217, 255, 0.15);
+    background: rgba(212, 175, 55, 0.2);
+    transform: translateY(-2px);
   }
 
-  /* Loader overlay */
+  /* Loading Overlay */
   .overlay {
     position: fixed;
     inset: 0;
     display: none;
     align-items: center;
     justify-content: center;
-    background: rgba(10, 14, 39, 0.7);
-    backdrop-filter: blur(4px);
-    z-index: 50;
+    background: rgba(15, 20, 25, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 100;
   }
 
   .overlay.show {
@@ -489,9 +487,8 @@
   .spinner {
     width: 80px;
     height: 80px;
-    border: 4px solid rgba(0, 217, 255, 0.2);
-    border-top: 4px solid var(--primary);
-    border-right: 4px solid var(--secondary);
+    border: 3px solid rgba(212, 175, 55, 0.2);
+    border-top-color: var(--gold);
     border-radius: 50%;
     animation: spin 1.2s linear infinite;
   }
@@ -501,444 +498,404 @@
   }
 
   /* Footer */
-  .credits {
+  .footer {
     text-align: center;
-    margin-top: 32px;
-    color: var(--text-secondary);
-    font-weight: 600;
+    margin-top: 60px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(212, 175, 55, 0.1);
     font-size: 14px;
+    color: var(--text-muted);
   }
 
-  .credits a {
-    color: var(--primary);
-    font-weight: 800;
+  .footer a {
+    color: var(--gold);
     text-decoration: none;
+    font-weight: 600;
     transition: color 0.3s ease;
   }
 
-  .credits a:hover {
-    color: var(--secondary);
-  }
-
-  .credits strong {
-    color: var(--text-primary);
+  .footer a:hover {
+    color: var(--accent-blue);
   }
 
   /* Responsive */
   @media (max-width: 768px) {
-    .wrap {
-      padding: 40px 16px 80px;
+    .container {
+      padding: 40px 20px;
     }
 
     h1 {
+      font-size: 42px;
+    }
+
+    .difficulty-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .quiz-header {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .question-section {
+      padding: 30px 20px;
+    }
+
+    .question {
+      font-size: 24px;
+    }
+
+    .options-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .results-title {
       font-size: 36px;
     }
 
-    .grid {
-      grid-template-columns: 1fr;
+    .action-buttons {
+      flex-direction: column;
     }
 
-    .status {
-      grid-template-columns: 1fr;
-      gap: 12px;
-      padding: 20px;
-    }
-
-    .q {
-      font-size: 24px;
-    }
-
-    .opts {
-      grid-template-columns: 1fr;
-    }
-
-    .tiers {
-      padding: 24px;
-    }
-
-    #done {
-      padding: 24px;
-    }
-
-    #done h2 {
-      font-size: 28px;
-    }
-
-    .stat-value {
-      font-size: 24px;
+    button {
+      width: 100%;
     }
   }
 </style>
 </head>
 <body>
   <div class="bg-gradient">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
   </div>
 
-  <div class="overlay" id="overlay"><div class="spinner" aria-label="processing"></div></div>
+  <div class="overlay" id="overlay">
+    <div class="spinner"></div>
+  </div>
 
-  <div class="wrap">
+  <div class="container">
+    <!-- Header -->
     <div class="header">
-      <div class="logo">⚡</div>
+      <div class="logo-badge">Premium Learning Experience</div>
       <h1>Gensyn Compute Challenge</h1>
+      <p class="subtitle">Master the fundamentals of decentralized compute through interactive challenges. No wallet required.</p>
     </div>
 
-    <p class="lead">
-      Pick your difficulty level → answer questions → verify your knowledge. <strong>10 challenges per run.</strong>
-    </p>
-    <p class="lead">
-      A modern, interactive learning experience about decentralized compute. No wallet, no API—<strong>just pure knowledge.</strong>
-    </p>
+    <!-- Home: Difficulty Selection -->
+    <section id="home">
+      <div class="difficulty-grid">
+        <div class="difficulty-card" data-tier="cpu">
+          <div class="card-content">
+            <div class="card-icon">🔧</div>
+            <h2 class="card-title">Beginner</h2>
+            <div class="card-badge">CPU Mode</div>
+            <p class="card-description">Start your journey with foundational concepts and extended time to think through each question.</p>
+            <div class="card-stats">
+              <div class="stat">
+                <div class="stat-value">60s</div>
+                <div>per question</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">10</div>
+                <div>questions</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <!-- Home: Choose Difficulty -->
-    <section id="home" class="panel tiers" role="region" aria-label="choose difficulty">
-      <h2>Choose Your Challenge</h2>
-      <div class="grid">
-        <article class="card" data-tier="cpu">
-          <h3>🔧 CPU Mode</h3>
-          <span class="difficulty-badge">Beginner</span>
-          <p>More time • Foundational concepts • Perfect for getting started</p>
-        </article>
+        <div class="difficulty-card" data-tier="gpu">
+          <div class="card-content">
+            <div class="card-icon">⚙️</div>
+            <h2 class="card-title">Intermediate</h2>
+            <div class="card-badge">RTX 4090 Mode</div>
+            <p class="card-description">Challenge yourself with mixed difficulty questions and balanced time constraints for a standard learning pace.</p>
+            <div class="card-stats">
+              <div class="stat">
+                <div class="stat-value">45s</div>
+                <div>per question</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">10</div>
+                <div>questions</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        <article class="card" data-tier="gpu">
-          <h3>⚙️ RTX 4090 Mode</h3>
-          <span class="difficulty-badge">Intermediate</span>
-          <p>Standard time • Mixed difficulty • Build your understanding</p>
-        </article>
-
-        <article class="card" data-tier="h200">
-          <h3>🚀 H200 Mode</h3>
-          <span class="difficulty-badge">Advanced</span>
-          <p>Less time • Advanced topics • Master the subject</p>
-        </article>
+        <div class="difficulty-card" data-tier="h200">
+          <div class="card-content">
+            <div class="card-icon">🚀</div>
+            <h2 class="card-title">Advanced</h2>
+            <div class="card-badge">H200 Mode</div>
+            <p class="card-description">Test your mastery with advanced topics and fast-paced questions that demand quick thinking and deep knowledge.</p>
+            <div class="card-stats">
+              <div class="stat">
+                <div class="stat-value">30s</div>
+                <div>per question</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">10</div>
+                <div>questions</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Quiz Page -->
-    <section id="play" class="panel" style="display:none; margin-top:40px">
-      <div class="status">
-        <div class="stat-card">
+    <!-- Quiz Section -->
+    <section id="play" class="quiz-container">
+      <div class="quiz-header">
+        <div class="stat-box">
           <div class="stat-label">Difficulty</div>
-          <div class="stat-value" id="kTier">—</div>
+          <div class="stat-display" id="kTier">—</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-box">
           <div class="stat-label">Verified</div>
-          <div class="stat-value" id="kScore">0/10</div>
+          <div class="stat-display" id="kScore">0/10</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Time Remaining</div>
-          <div class="stat-value warn" id="kTime">—</div>
+        <div class="stat-box">
+          <div class="stat-label">Time Left</div>
+          <div class="stat-display time" id="kTime">—</div>
         </div>
       </div>
 
-      <div class="qwrap">
-        <h3 class="q" id="theQ">—</h3>
-        <div class="opts" id="opts"></div>
-        <div class="foot-line">
-          <div id="prog">Task 1 of 10</div>
-          <div class="verdict" id="verdict"></div>
+      <div class="question-section">
+        <h3 class="question" id="theQ">—</h3>
+        <div class="options-grid" id="opts"></div>
+        <div class="question-footer">
+          <div id="prog">Question 1 of 10</div>
+          <div class="feedback" id="verdict"></div>
         </div>
       </div>
     </section>
 
-    <!-- Results Page -->
-    <section id="done" class="panel" style="display:none; margin-top:40px">
-      <h2>Challenge Complete!</h2>
-      <p class="final-line" id="finalLine"></p>
+    <!-- Results Section -->
+    <section id="done">
+      <h2 class="results-title">Challenge Complete</h2>
+      <p class="results-text" id="finalLine"></p>
       <div class="action-buttons">
         <button id="again">Play Again</button>
         <button id="homeBtn">Choose Different Mode</button>
       </div>
     </section>
 
-    <p class="credits">
-      <strong>Created with ♥</strong> by <a href="https://x.com/TheUvKhan" target="_blank" rel="noopener">TheUvKhan</a>
-      • Learning game • No wallet required
-    </p>
+    <!-- Footer -->
+    <div class="footer">
+      <p>Created with purpose by <a href="https://x.com/TheUvKhan" target="_blank" rel="noopener">TheUvKhan</a> • No wallet, no API • Pure learning</p>
+    </div>
   </div>
 
-    <p class="lead">
-      Pick your “hardware” → answer fast → verify tasks. <strong>10 tasks</strong> per run.
-      Deck & options shuffle on every refresh.
-    </p>
-    <p class="lead" style="margin-top:8px">
-      This mini-game is a community-made, Gensyn-inspired learning toy. The goal is simple:
-      help newcomers grok how decentralized compute works (and have some fun).
-      <strong>No wallet, no API, just knowledge.</strong>
-    </p>
+  <script>
+    // === Questions Database ===
+    const CPU_QS = [
+      { q: "What is the primary purpose of a decentralized compute network?", a: ["To distribute computational tasks across multiple nodes", "To replace cloud providers entirely", "To reduce internet bandwidth", "To eliminate servers"], c: 0 },
+      { q: "Which of the following is NOT a characteristic of decentralized systems?", a: ["Distributed control", "Single point of failure", "Peer-to-peer communication", "Network resilience"], c: 1 },
+      { q: "What does a node represent in a decentralized network?", a: ["A centralized server", "An individual participant in the network", "A security protocol", "A payment gateway"], c: 1 },
+      { q: "How do decentralized networks achieve consensus?", a: ["Through central authority", "Through distributed agreement mechanisms", "By voting", "Through bandwidth allocation"], c: 1 },
+      { q: "What is the role of cryptography in decentralized systems?", a: ["To encrypt passwords only", "To secure transactions and verify identities", "To increase processing speed", "To reduce storage costs"], c: 1 },
+      { q: "Which is an example of a decentralized application (dApp)?", a: ["Email", "Social media feeds", "Cryptocurrency networks", "Video streaming"], c: 2 },
+      { q: "What is meant by 'trustlessness' in decentralized systems?", a: ["No one can be trusted", "Trust is enabled through cryptography rather than central authority", "All participants are honest", "There are no security measures"], c: 1 },
+      { q: "How do decentralized networks handle data storage?", a: ["All data on one server", "Distributed across multiple nodes", "Only on external drives", "In a cloud database"], c: 1 },
+      { q: "What advantage do decentralized networks have over centralized ones?", a: ["Higher costs", "Reduced downtime and censorship resistance", "Less transparency", "Slower speeds"], c: 1 },
+      { q: "What is a smart contract?", a: ["A legal document", "Self-executing code on a blockchain", "A payment method", "A backup system"], c: 1 }
+    ];
 
-    <!-- Tiers plate (only one) -->
-    <section id="home" class="panel tiers" role="region" aria-label="choose difficulty">
-      <h2>Choose difficulty</h2>
-      <div class="grid">
-        <article class="card" data-tier="cpu">
-          <h3>CPU <span class="hint-pill">Simple</span></h3>
-          <p>More time • foundational questions</p>
-        </article>
+    const GPU_QS = [
+      { q: "What is the difference between proof-of-work and proof-of-stake?", a: ["They are identical", "PoW uses computational work; PoS uses stake ownership", "PoW is faster", "PoS requires more energy"], c: 1 },
+      { q: "How does sharding improve blockchain scalability?", a: ["By reducing transaction fees", "By dividing the network into parallel processing groups", "By eliminating nodes", "By centralizing data"], c: 1 },
+      { q: "What role does a validator play in a decentralized network?", a: ["Marketing the network", "Verifying transactions and maintaining the ledger", "Creating new coins", "Managing user passwords"], c: 1 },
+      { q: "What is the purpose of a distributed hash table (DHT)?", a: ["To encrypt data", "To store and retrieve data across distributed nodes", "To validate transactions", "To manage user identity"], c: 1 },
+      { q: "How do decentralized networks prevent double-spending?", a: ["Through speed alone", "Through cryptographic verification and consensus mechanisms", "By eliminating transactions", "By using banks"], c: 1 },
+      { q: "What is latency in the context of decentralized networks?", a: ["Data loss", "Time delay in message transmission", "Network bandwidth", "Security vulnerabilities"], c: 1 },
+      { q: "How does Byzantine Fault Tolerance help decentralized systems?", a: ["It eliminates all failures", "It allows the system to reach consensus despite some malicious nodes", "It speeds up transactions", "It reduces node count"], c: 1 },
+      { q: "What is the role of an oracle in blockchain systems?", a: ["To provide external data to smart contracts", "To validate blocks", "To manage wallets", "To encrypt transactions"], c: 0 },
+      { q: "How do decentralized networks achieve high availability?", a: ["Using backup servers", "Through redundancy across multiple nodes", "By limiting users", "By increasing fees"], c: 1 },
+      { q: "What is a merkle tree used for?", a: ["To organize user data", "To efficiently verify the integrity of large datasets", "To store private keys", "To manage network topology"], c: 1 }
+    ];
 
-        <article class="card" data-tier="gpu">
-          <h3>RTX 4090 <span class="hint-pill">Medium</span></h3>
-          <p>Standard time • mixed difficulty</p>
-        </article>
+    const HARD_QS = [
+      { q: "What is the CAP theorem and how does it apply to decentralized systems?", a: ["It guarantees consistency, availability, and partition tolerance", "It states that only 2 of 3 properties can be achieved simultaneously", "It eliminates network partitions", "It maximizes scalability"], c: 1 },
+      { q: "Explain the difference between eventual and strong consistency.", a: ["They are the same", "Strong consistency ensures immediate agreement; eventual consistency allows temporary divergence", "Eventual consistency is faster", "Strong consistency is outdated"], c: 1 },
+      { q: "What are selfish mining attacks and how do they work?", a: ["Mining by individuals", "Withholding blocks to gain mining advantages", "Using less energy", "Attacking other miners"], c: 1 },
+      { q: "How does state channels improve scalability?", a: ["By increasing block size", "By moving transactions off-chain while maintaining security", "By eliminating nodes", "By centralizing data"], c: 1 },
+      { q: "What is the role of incentive mechanisms in decentralized networks?", a: ["To enforce rules", "To align participant behavior with network goals", "To create barriers to entry", "To eliminate competition"], c: 1 },
+      { q: "How do zk-SNARK proofs enhance privacy in decentralized systems?", a: ["They eliminate all transactions", "They prove knowledge without revealing underlying data", "They slow down networks", "They centralize control"], c: 1 },
+      { q: "What is the difference between homomorphic and threshold encryption?", a: ["They serve identical purposes", "Homomorphic allows computation on encrypted data; threshold requires key shares", "Both are identical", "Neither is used"], c: 1 },
+      { q: "How does the gossip protocol work in distributed systems?", a: ["Nodes send random messages", "Nodes spread updates like gossip to achieve eventual consistency", "It encrypts all data", "It requires a central coordinator"], c: 1 },
+      { q: "What is a 51% attack and what does it compromise?", a: ["Attacking 51 nodes", "Controlling network majority to alter consensus and double-spend", "A security feature", "Preventing all transactions"], c: 1 },
+      { q: "How do commit-reveal schemes prevent collusion in voting systems?", a: ["They eliminate voting", "By separating commitment and revelation phases", "By requiring central authority", "By simplifying the process"], c: 1 }
+    ];
 
-        <article class="card" data-tier="h200">
-          <h3>H200 <span class="hint-pill">Hard</span></h3>
-          <p>Less time • advanced questions</p>
-        </article>
-      </div>
-    </section>
+    // === Constants ===
+    const RUN_LEN = 10;
+    const TIER_TIME = { cpu: 60, gpu: 45, h200: 30 };
 
-    <!-- Quiz page -->
-    <section id="play" class="panel" style="display:none; margin-top:22px">
-      <div class="status">
-        <div class="k">Profile <span class="v" id="kTier">—</span></div>
-        <div class="k">Tasks Verified <span class="v" id="kScore">0/10</span></div>
-        <div class="k">Time Left <span class="v" id="kTime">—</span></div>
-      </div>
+    // === State ===
+    let deck = [];
+    let TIER = null;
+    let idx = 0;
+    let score = 0;
+    let timeLeft = 0;
+    let timer = null;
 
-      <div class="qwrap">
-        <h3 class="q" id="theQ">—</h3>
-        <div id="opts"></div>
-        <div class="foot-line">
-          <div id="prog">Task 1 of 10</div>
-          <div id="verdict"></div>
-        </div>
-      </div>
-    </section>
+    // === DOM Elements ===
+    const home = document.getElementById('home');
+    const play = document.getElementById('play');
+    const done = document.getElementById('done');
+    const theQ = document.getElementById('theQ');
+    const optsWrap = document.getElementById('opts');
+    const kTier = document.getElementById('kTier');
+    const kScore = document.getElementById('kScore');
+    const kTime = document.getElementById('kTime');
+    const prog = document.getElementById('prog');
+    const verdict = document.getElementById('verdict');
+    const finalLine = document.getElementById('finalLine');
+    const overlay = document.getElementById('overlay');
 
-    <!-- Results -->
-    <section id="done" class="panel" style="display:none; margin-top:22px;padding:24px 24px 28px">
-      <h2 style="margin:4px 0 2px; color:var(--ink); font-weight:900">Run complete</h2>
-      <p class="lead" id="finalLine" style="margin-top:6px"></p>
-      <div style="display:flex; gap:12px; margin-top:18px">
-        <button id="again" style="background:#2a211a;color:var(--ink);border:1px solid #3a2e25;padding:12px 16px;border-radius:10px;cursor:pointer">Play again</button>
-        <button id="homeBtn" style="background:#2a211a;color:var(--ink);border:1px solid #3a2e25;padding:12px 16px;border-radius:10px;cursor:pointer">Back to tiers</button>
-      </div>
-    </section>
+    // === Utils ===
+    const shuffle = (arr) => {
+      const newArr = [...arr];
+      for (let i = newArr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+      }
+      return newArr;
+    };
 
-    <p class="credits">
-      <strong>Made with ♥</strong> by <a href="https://x.com/TheUvKhan" target="_blank" rel="noopener">TheUvKhan</a>
-      • No wallet, no API — learning game.
-    </p>
-  </div>
+    const showOverlay = (ms) => {
+      overlay.classList.add('show');
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          overlay.classList.remove('show');
+          resolve();
+        }, ms);
+      });
+    };
 
-<script>
-/* ---------------------- Questions ---------------------- */
-/* 12 per tier so you get a full 10-task run; add more any time */
+    const tick = () => {
+      timeLeft--;
+      kTime.textContent = `${timeLeft}s`;
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        idx++;
+        nextQ();
+      }
+    };
 
-const CPU_QS = [
-  {q:"What’s a safe use of public endpoints?", a:["Reading summarized stats","Posting private keys","DoS testing them"], c:0},
-  {q:"Average block time on Gensyn testnet is ~", a:["2s","20s","60s"], c:0},
-  {q:"‘Decentralized compute’ mainly means…", a:["Many independent nodes do work","One server handles everything","Only GPUs can participate"], c:0},
-  {q:"A validator (verifier) on a network…", a:["Checks correctness of work","Mints new coins every second","Manages everyone’s wallets"], c:0},
-  {q:"Leaderboards usually list…", a:["Peer/score/uptime style info","Private seed phrases","Bank details"], c:0},
-  {q:"Why keep endpoints cached or rate-limited?", a:["Protect infra and keep fair use","To break client apps","To hide all data"], c:0},
-  {q:"Posting private keys in public is…", a:["Never acceptable","Okay if short","Required for testing"], c:0},
-  {q:"A ‘peerId’ is typically…", a:["An identifier for a node in the network","A wallet passphrase","GPU model name"], c:0},
-  {q:"If the API returns 429, it means…", a:["Too many requests / throttled","Success","Permanent ban"], c:0},
-  {q:"Transparent settlement helps auditing because…", a:["It lets others verify the trail","It hides all activity","It deletes old history"], c:0},
-  {q:"Reading /network-stats might give…", a:["Block time, tx count, addresses","SSH passwords","GPU temperatures"], c:0},
-  {q:"A healthy community program rewards…", a:["Helpful, constructive contributions","Spammy mass-posting","Leaking credentials"], c:0},
-];
+    const sampleDeck = (qs) => {
+      const sampled = [];
+      const copy = [...qs];
+      for (let i = 0; i < RUN_LEN; i++) {
+        const idx = Math.floor(Math.random() * copy.length);
+        sampled.push(copy[idx]);
+        copy.splice(idx, 1);
+      }
+      return sampled;
+    };
 
-const GPU_QS = [
-  {q:"Why would a GPU node be useful in Gensyn-style training?", a:["Lowering block times directly","Improving wallet seed phrases","Parallel math workloads"], c:2},
-  {q:"Swarm RL (e.g., tiny games) on Gensyn is most like…", a:["Coordinated workers gathering rewards","One big sequential solver","Static website hosting"], c:0},
-  {q:"Score on a leaderboard often relates to…", a:["Quality/quantity of validated work","Number of tweets you post","Age of your Discord account"], c:0},
-  {q:"Why randomize quiz options client-side?", a:["Reduce memorization bias","Save GPU memory","Increase latency"], c:0},
-  {q:"Public ‘nodes-connected’ endpoints typically show…", a:["Aggregated counts","Exact IP + home address","SSH root keys"], c:0},
-  {q:"What’s a good reason to cache API reads?", a:["Fairness and infra health","To mislead users","To block all traffic"], c:0},
-  {q:"If a task is verified on-chain, others can…", a:["Check evidence later","Erase it permanently","Extract private keys"], c:0},
-  {q:"What’s one risk of hammering public endpoints?", a:["Rate limits or temporary blocks","Free GPU credits","Guaranteed airdrop"], c:0},
-  {q:"A community ‘Pioneer’ program likely encourages…", a:["Building & teaching","Key farming","Wallet draining"], c:0},
-  {q:"A peer alias like ‘silent durable duck’ is…", a:["A nickname for display","A private mnemonic","A GPU memory brand"], c:0},
-  {q:"When verifying results, a node primarily…", a:["Checks claimed outputs match rules/data","Increases someone’s TVL","Refreshes DNS caches"], c:0},
-  {q:"Why show a tiny processing delay after each answer?", a:["Better UX / mimic verification","Slow down the browser","Waste compute"], c:0},
-];
+    const nextQ = () => {
+      if (idx >= RUN_LEN) return endRun();
 
-const HARD_QS = [
-  {q:"In proof-of-useful-work settings, verifiers…", a:["Check correctness of submitted work","Mint blocks based on timestamps only","Ignore workloads"], c:0},
-  {q:"A GPU like H200 vs consumer 4090 mainly differs in…", a:["Memory capacity/bandwidth & data center focus","Ability to sign transactions","Needs water-cooling to produce blocks"], c:0},
-  {q:"Why would batching tasks help a network?", a:["Amortize overhead; throughput up","Hide bad results","Increase latency by design"], c:0},
-  {q:"A ‘challenge-response’ scheme is useful for…", a:["Spot-checking correctness","DNS routing","Cross-site scripting"], c:0},
-  {q:"What helps Sybil resistance in scoring?", a:["Costs/limits/verification per identity","Unlimited free accounts","Posting more emojis"], c:0},
-  {q:"Why separate read-only public APIs from submission paths?", a:["Security/isolation/principle of least privilege","To confuse users","It’s a legal requirement"], c:0},
-  {q:"In RL settings, reward signals…", a:["Guide policy updates","Encrypt database dumps","Mint gas tokens"], c:0},
-  {q:"Which helps reproducibility of training tasks?", a:["Deterministic seeds & logged configs","Deleting all metadata","Random hardware faults"], c:0},
-  {q:"A fair leaderboard should be…", a:["Auditable/explainable","Opaque & private","Pay-to-win only"], c:0},
-  {q:"If you must expose inference endpoints publicly, add…", a:["Rate limits & abuse detection","Wallet imports","SSH over HTTP"], c:0},
-  {q:"What’s a good reason to shard workloads?", a:["Parallelism & fault isolation","Guarantee more gas fees","Make logs unreadable"], c:0},
-  {q:"Why keep settlement and task logs tamper-evident?", a:["Trust & post-hoc verification","Save CSS bytes","GPU overclocking"], c:0},
-];
+      const q = deck[idx];
+      theQ.textContent = q.q;
+      optsWrap.innerHTML = '';
+      verdict.innerHTML = '';
+      prog.textContent = `Question ${idx + 1} of ${RUN_LEN}`;
 
-/* ---------------------- Helpers ---------------------- */
-const $ = sel => document.querySelector(sel);
-const overlay = $('#overlay');
+      const letters = ['A', 'B', 'C', 'D'];
+      const shuffledOptions = shuffle(q.a);
+      shuffledOptions.forEach((txt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.innerHTML = `<strong>${letters[i]}.</strong> ${txt}`;
+        btn.onclick = () => onPick(txt, q);
+        optsWrap.appendChild(btn);
+      });
 
-const showOverlay = ms => new Promise(r=>{
-  overlay.classList.add('show');
-  setTimeout(()=>{ overlay.classList.remove('show'); r(); }, ms);
-});
+      timeLeft = TIER_TIME[TIER] || 15;
+      kTime.textContent = `${timeLeft}s`;
+      clearInterval(timer);
+      timer = setInterval(tick, 1000);
+    };
 
-const shuffle = (arr) => {
-  const a = arr.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j = (Math.random()* (i+1))|0;
-    [a[i],a[j]]=[a[j],a[i]];
-  }
-  return a;
-}
+    const onPick = async (txt, q) => {
+      clearInterval(timer);
+      const correctText = q.a[q.c];
 
-/* ---------------------- App State ---------------------- */
-let TIER = null;
-let deck = [];
-let RUN_LEN = 10;         // will adapt based on bank length
-let idx = 0;
-let score = 0;
-let timer = null;
-let timeLeft = 0;
+      const buttons = [...optsWrap.querySelectorAll('.option')];
+      buttons.forEach((b) => {
+        const plain = b.textContent.replace(/^[A-D]\.\s/, '');
+        if (plain === correctText) b.classList.add('correct');
+      });
 
-const TIER_TIME = { cpu:20, gpu:15, h200:12 };
+      const isCorrect = txt === correctText;
+      if (isCorrect) {
+        score++;
+        verdict.innerHTML = '<span class="ok">✓ Verified</span>';
+      } else {
+        verdict.innerHTML = '<span class="bad">✗ Incorrect</span>';
+        buttons.forEach((b) => {
+          const plain = b.textContent.replace(/^[A-D]\.\s/, '');
+          if (plain === txt) b.classList.add('wrong');
+        });
+      }
 
-/* ---------------------- DOM refs ---------------------- */
-const home = $('#home');
-const play = $('#play');
-const done = $('#done');
+      kScore.textContent = `${score}/${RUN_LEN}`;
 
-const kTier = $('#kTier');
-const kScore = $('#kScore');
-const kTime = $('#kTime');
-const theQ = $('#theQ');
-const optsWrap = $('#opts');
-const prog = $('#prog');
-const verdict = $('#verdict');
-const finalLine = $('#finalLine');
-const again = $('#again');
-const homeBtn = $('#homeBtn');
+      await showOverlay(500);
+      idx++;
+      nextQ();
+    };
 
-/* ---------------------- Flow ---------------------- */
-const sampleDeck = (bank) => {
-  const n = Math.min(10, bank.length);
-  RUN_LEN = n;                       // <- adaptive run length (fix)
-  return shuffle(bank).slice(0, n);
-}
+    const startTier = async (t) => {
+      TIER = t;
+      if (t === 'cpu') {
+        deck = sampleDeck(CPU_QS);
+      } else if (t === 'gpu') {
+        deck = sampleDeck(GPU_QS);
+      } else if (t === 'h200') {
+        deck = sampleDeck(HARD_QS);
+      }
 
-const startTier = async (t) => {
-  TIER = t;
-  // pick bank
-  if(t==='cpu'){ deck = sampleDeck(CPU_QS); }
-  if(t==='gpu'){ deck = sampleDeck(GPU_QS); }
-  if(t==='h200'){ deck = sampleDeck(HARD_QS); }
+      idx = 0;
+      score = 0;
+      kTier.textContent = t === 'cpu' ? 'Beginner' : t === 'gpu' ? 'Intermediate' : 'Advanced';
+      kScore.textContent = `0/${RUN_LEN}`;
 
-  idx = 0; score = 0;
-  kTier.textContent = (t==='cpu')?'🔧 Beginner':(t==='gpu')?'⚙️ Intermediate':'🚀 Advanced';
-  kScore.textContent = `0/${RUN_LEN}`;
+      home.style.display = 'none';
+      play.style.display = 'block';
+      done.style.display = 'none';
 
-  home.style.display='none';
-  play.style.display='block';
-  done.style.display='none';
+      await showOverlay(500);
+      nextQ();
+    };
 
-  await showOverlay(500);            // processing after tier pick
-  nextQ();
-};
+    const endRun = () => {
+      play.style.display = 'none';
+      done.style.display = 'block';
+      const percentage = Math.round((score / RUN_LEN) * 100);
+      finalLine.innerHTML = `You verified <strong>${score}/${RUN_LEN}</strong> challenges (${percentage}%) on <strong>${kTier.textContent}</strong> difficulty.`;
+    };
 
-const tick = () => {
-  timeLeft--;
-  kTime.textContent = `${timeLeft}s`;
-  if(timeLeft<=0){
-    clearInterval(timer);
-    lockAndReveal(-1);               // treat as miss
-  }
-};
+    // === Event Listeners ===
+    document.querySelectorAll('.difficulty-card').forEach((card) => {
+      card.addEventListener('click', () => startTier(card.dataset.tier));
+    });
 
-  const nextQ = () => {
-  if(idx>=RUN_LEN) return endRun();
+    document.getElementById('again').addEventListener('click', () => {
+      home.style.display = 'block';
+      play.style.display = 'none';
+      done.style.display = 'none';
+    });
 
-  const q = deck[idx];
-  theQ.textContent = q.q;
-  optsWrap.innerHTML='';
-  verdict.innerHTML='';
-  prog.textContent = `Task ${idx+1} of ${RUN_LEN}`;
-
-  const letters = ['A','B','C','D'];
-  const shuffledOptions = shuffle(q.a);
-  shuffledOptions.forEach((txt, i)=>{
-    const btn = document.createElement('button');
-    btn.className='opt';
-    btn.innerHTML = `<strong>${letters[i]}.</strong> ${txt}`;
-    btn.onclick = ()=> onPick(txt, q);
-    optsWrap.appendChild(btn);
-  });
-
-  timeLeft = TIER_TIME[TIER] || 15;
-  kTime.textContent = `${timeLeft}s`;
-  clearInterval(timer);
-  timer = setInterval(tick, 1000);
-};
-
-const onPick = async (txt, q) => {
-  clearInterval(timer);
-  const correctText = q.a[q.c];
-
-  // find buttons & mark
-  const buttons = [...optsWrap.querySelectorAll('.opt')];
-  buttons.forEach(b=>{
-    const plain = b.textContent.replace(/^[A-D]\.\s/,'');
-    if(plain === correctText) b.classList.add('correct');
-  });
-
-  const isCorrect = (txt === correctText);
-  if(isCorrect){ 
-    score++; 
-    verdict.innerHTML = `<span class="ok">✓ Verified</span>`; 
-  }
-  else{ 
-    verdict.innerHTML = `<span class="bad">✗ Mismatch</span>`; 
-    buttons.forEach(b=>{
-      const plain = b.textContent.replace(/^[A-D]\.\s/,'');
-      if(plain === txt) b.classList.add('wrong');
-    }); 
-  }
-
-  kScore.textContent = `${score}/${RUN_LEN}`;
-
-  await showOverlay(500);            // 0.5s "verification"
-  idx++;
-  nextQ();
-};
-
-const lockAndReveal = (forceWrongIndex)=>{
-  const q = deck[idx];
-  const correctText = q.a[q.c];
-  const buttons = [...optsWrap.querySelectorAll('.opt')];
-  buttons.forEach(b=>{
-    const plain = b.textContent.replace(/^[A-D]\.\s/,'');
-    if(plain === correctText) b.classList.add('correct');
-  });
-  verdict.innerHTML = `<span class="bad">Timeout ✗</span>`;
-  showOverlay(500).then(()=>{ idx++; nextQ(); });
-};
-
-const endRun = ()=>{
-  play.style.display='none';
-  done.style.display='block';
-  const percentage = Math.round((score/RUN_LEN)*100);
-  finalLine.innerHTML = `You verified <strong>${score}/${RUN_LEN}</strong> challenges (${percentage}%) on <strong>${kTier.textContent}</strong> difficulty.`;
-};
-
-/* ---------------------- Wiring ---------------------- */
-document.querySelectorAll('.card[data-tier]').forEach(el=>{
-  el.addEventListener('click', ()=> startTier(el.getAttribute('data-tier')));
-});
-again.addEventListener('click', ()=> startTier(TIER));
-homeBtn.addEventListener('click', ()=>{
-  clearInterval(timer);
-  play.style.display='none';
-  done.style.display='none';
-  home.style.display='block';
-});
-</script>
+    document.getElementById('homeBtn').addEventListener('click', () => {
+      home.style.display = 'block';
+      play.style.display = 'none';
+      done.style.display = 'none';
+    });
+  </script>
 </body>
 </html>
